@@ -8,7 +8,7 @@ pipeline {
   stages {
     stage('Git') {
       steps {
-        git 'https://github.com/agomez94/flasking.git'
+        git(url: 'https://github.com/agomez94/flasking.git', branch: 'main')
       }
     }
 
