@@ -1,4 +1,11 @@
 pipeline {
+
+environment{
+  registry = "agomezjr94/flask_app"
+  registryCredentials = "docker"
+  cluster_name = "skillstorm"
+}
+
   agent {
     node {
       label 'docker'
@@ -12,24 +19,23 @@ pipeline {
       }
     }
 
-    stage('Docker Build') {
-      steps {
-        sh '''docker build -t agomezjr94/flask_app .
-'''
+  stage('Build Stage'){
+    steps {
+      script {
+        dockerImage = docker.build(registry)
       }
     }
+  }
 
-    stage('Docker Login') {
-      steps {
-        sh 'docker login -u agomezjr94 -p dckr_pat_4vsgyJubZvGGKo0QI0GewPS7kuE'
+  stage('Deployment Stage') {
+    steps{
+      script {
+        docker.withRegistry('', registryCredentials) {
+          dockerImage.push()
+        }
       }
     }
-
-    stage('Docker Push') {
-      steps {
-        sh 'docker push agomezjr94/flask_app'
-      }
-    }
+  }
 
   }
 }
